@@ -21,9 +21,9 @@ The emphasis is not only algorithm comparison, but reproducible engineering. The
 
 In short, this module answers a concrete question with repeatable evidence: given the same controls and fused observations, which estimator provides the best trajectory accuracy for a specific scenario and configuration.
 
-</details>
 
-## This Project
+
+## The Project
 
 - Demonstrates confidence-aware sensor fusion in a compact and inspectable pipeline.
 - Compares three estimators under identical controls and measurements.
@@ -225,3 +225,5 @@ Overlay outputs:
 ## Related Documentation
 
 - Dataset shortlist and licensing notes: [DATASET_SOURCES.md](DATASET_SOURCES.md)
+
+</details>
