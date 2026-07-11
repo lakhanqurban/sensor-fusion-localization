@@ -8,6 +8,10 @@
 - Outputs: RMSE metrics, trajectory plots, and optional markdown benchmark report.
 - Use cases: quick synthetic checks and replay-based evaluation on converted datasets.
 
+## Research Context
+
+Accurate state estimation from heterogeneous, intermittently available sensors remains a fundamental challenge in mobile robotics and autonomous driving. This benchmark addresses the problem of **confidence-aware sensor fusion for 2D localization** — combining a coarse but always-available GNSS-like measurement with a higher-precision but variable-confidence camera-derived observation. While the robotics literature extensively covers Kalman filtering (EKF, UKF) and particle filtering (PF) individually (Thrun et al., *Probabilistic Robotics*, 2005), direct empirical comparisons under identical fused observation streams are less common, especially with explicit confidence-weighting at the measurement level. This project factors fusion out as a preprocessing layer, enabling a controlled three-way comparison of EKF, UKF, and PF on the same pre-fused sequence. The confidence-weighted fusion scheme relates to adaptive measurement-noise models studied in Bar-Shalom et al. (*Estimation with Applications*, 2001), but is here applied as a lightweight deterministic rule before estimator ingestion, simplifying the architecture while retaining the key benefit of down-weighting degraded visual estimates. By releasing a reproducible pipeline with synthetic and replay-based modes, this project provides a transparent baseline for further research into estimator selection, sensor degradation modelling, and multi-modal fusion under realistic dropout patterns.
+
 <details>
 <summary><strong>Project Overview (expanded)</strong></summary>
 
