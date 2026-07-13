@@ -1,6 +1,8 @@
-# Sensor Fusion Localization Benchmark
+# 🛰️ Sensor Fusion Localization Benchmark
 
-## TL;DR
+> A reproducible 2D localization benchmark for comparing EKF, UKF, and particle-filter estimates from confidence-aware GNSS-like and camera-derived observations.
+
+## ✨ At a Glance
 
 - Inputs: GNSS-like XY + camera-derived XY (+ confidence) + motion controls.
 - Core idea: confidence-aware fusion creates one observation stream for all filters.
@@ -8,7 +10,7 @@
 - Outputs: RMSE metrics, trajectory plots, and optional markdown benchmark report.
 - Use cases: quick synthetic checks and replay-based evaluation on converted datasets.
 
-## Research Context
+## 🎯 Problem and Research Context
 
 Accurate state estimation from heterogeneous, intermittently available sensors remains a fundamental challenge in mobile robotics and autonomous driving. This benchmark addresses the problem of **confidence-aware sensor fusion for 2D localization** — combining a coarse but always-available GNSS-like measurement with a higher-precision but variable-confidence camera-derived observation. While the robotics literature extensively covers Kalman filtering (EKF, UKF) and particle filtering (PF) individually (Thrun et al., *Probabilistic Robotics*, 2005), direct empirical comparisons under identical fused observation streams are less common, especially with explicit confidence-weighting at the measurement level. Prior work on loosely coupled GNSS–vision fusion (e.g., Weiss et al., 2011; Lynen et al., 2013) typically embeds fusion inside a single estimator; this project instead factors fusion out as a preprocessing layer, enabling a controlled three-way comparison of EKF, UKF, and PF on the same pre-fused sequence. The confidence-weighted fusion scheme relates to adaptive measurement-noise models studied in Bar-Shalom et al. (*Estimation with Applications*, 2001), but is here applied as a lightweight deterministic rule before estimator ingestion, simplifying the architecture while retaining the key benefit of down-weighting degraded visual estimates. By releasing a reproducible pipeline with synthetic and replay-based modes, this project provides a transparent baseline for further research into estimator selection, sensor degradation modelling, and multi-modal fusion under realistic dropout patterns.
 
@@ -23,14 +25,14 @@ In short, this module answers a concrete question with repeatable evidence: give
 
 </details>
 
-## This Project
+## 🚗 What This Project Does
 
 - Demonstrates confidence-aware sensor fusion in a compact and inspectable pipeline.
 - Compares three estimators under identical controls and measurements.
 - Supports both synthetic simulation and replay-based evaluation.
 - Produces figures and markdown reports suitable for documentation or portfolio use.
 
-## Results Snapshot
+## 📊 Results Snapshot
 
 Latest replay benchmark on data/tum_fr1_xyz_vo_replay.csv:
 
@@ -42,7 +44,7 @@ Latest replay benchmark on data/tum_fr1_xyz_vo_replay.csv:
 
 Lower values are better. In this run, EKF achieved the best position RMSE.
 
-## Pipeline Overview
+## 🏗️ Architecture and Data Flow
 
 At each frame, the system:
 
@@ -70,7 +72,7 @@ flowchart LR
     E --> F[Artifacts\nPNG plots + Markdown report]
 ```
 
-## Algorithms and Libraries
+## 🧠 Algorithms and Libraries
 
 ### Algorithms
 
@@ -88,7 +90,7 @@ flowchart LR
 - **OpenCV (`opencv-python`):** optional RGB-D visual-odometry conversion.
 - **Python standard library:** command-line parsing, paths, dataclasses, and report/file handling.
 
-## Project Layout
+## 📁 Project Layout
 
 - run_sensor_fusion_benchmark.py: main benchmark entrypoint
 - models.py: shared dataclasses for frame/control/metrics
@@ -104,7 +106,7 @@ flowchart LR
 - output/: generated figures and reports
 - data/: local replay CSVs and dataset extracts
 
-## Prerequisites
+## ✅ Prerequisites
 
 - Python 3.10+
 - Install repository dependencies from repo root:
@@ -119,11 +121,11 @@ pip install -r requirements.txt
 pip install opencv-python
 ```
 
-## Quickstart
+## 🚀 Quickstart
 
 Run these commands from repository root.
 
-### 1) Convert TUM sequence to replay CSV (VO camera measurements)
+### 1. Convert a TUM sequence to replay CSV (VO camera measurements)
 
 ```bash
 python src/projects/sensor_fusion_localization/tools/convert_tum_sequence_to_replay_csv.py \
@@ -132,7 +134,7 @@ python src/projects/sensor_fusion_localization/tools/convert_tum_sequence_to_rep
   --camera-source vo
 ```
 
-### 2) Run replay benchmark and export report
+### 2. Run the replay benchmark and export a report
 
 ```bash
 python src/projects/sensor_fusion_localization/run_sensor_fusion_benchmark.py \
@@ -141,7 +143,7 @@ python src/projects/sensor_fusion_localization/run_sensor_fusion_benchmark.py \
   --report
 ```
 
-### 3) Generate trajectory overlays
+### 3. Generate trajectory overlays
 
 ```bash
 python src/projects/sensor_fusion_localization/visualize_gt_vo_fused.py \
@@ -149,7 +151,7 @@ python src/projects/sensor_fusion_localization/visualize_gt_vo_fused.py \
   --smooth-window 31
 ```
 
-## Common Commands
+## 💻 Common Commands
 
 ```bash
 # Synthetic benchmark
@@ -174,7 +176,7 @@ python src/projects/sensor_fusion_localization/tools/convert_tum_sequence_to_rep
   --sequence-dir <tum_sequence_dir> --output <replay.csv> --camera-source vo
 ```
 
-## Replay CSV Contract
+## 🧾 Replay CSV Contract
 
 Expected columns:
 
@@ -197,7 +199,7 @@ Field guide:
 | camera_x_m, camera_y_m | Camera-derived observation |
 | camera_confidence | Camera confidence in [0, 1] |
 
-## TUM Sequence Notes
+## 🗺️ TUM Sequence Notes
 
 When using convert_tum_sequence_to_replay_csv.py:
 
@@ -212,7 +214,7 @@ Useful options:
 - --min-pnp-points: minimum valid RGB-D correspondences for PnP
 - --max-depth-m: max depth used for RGB-D backprojection
 
-## Output Artifacts
+## 🖼️ Output Artifacts
 
 Benchmark outputs:
 
@@ -224,27 +226,27 @@ Overlay outputs:
 - output/gt_vo_fused_overlay.png
 - output/gt_vo_fused_overlay_portfolio.png
 
-## Interpreting Metrics
+## 📐 Interpreting Metrics
 
 - RMSE X and RMSE Y indicate axis-wise error.
 - RMSE POS is the primary overall localization indicator.
 - A large X vs Y gap can indicate directional observability imbalance.
 - PF may require particle count and resampling tuning for stable replay performance.
 
-## Current Scope and Limitations
+## ⚠️ Current Scope and Limitations
 
 - VO path is intentionally lightweight (ORB matching + RGB-D PnP + trajectory accumulation).
 - TUM replay GNSS is GNSS-like simulated noise, not true vehicle GNSS logs.
 - Benchmark is 2D-focused and intended for controlled comparison, not production navigation.
 
-## Suggested Next Steps
+## 🔭 Suggested Next Steps
 
 1. Integrate true GNSS/INS logs (for example KITTI or Oxford RobotCar).
 2. Add VO outlier rejection and loop-closure constraints.
 3. Export innovation and covariance diagnostics for filter analysis.
 4. Add automated hyperparameter sweeps for PF and sensor-noise settings.
 
-## Related Documentation
+## 🔗 Related Documentation
 
 - Dataset shortlist and licensing notes: [DATASET_SOURCES.md](DATASET_SOURCES.md)
 - Contribution guide (repository root): [HOWTOCONTRIBUTE.md](../../../HOWTOCONTRIBUTE.md)
