@@ -10,20 +10,20 @@
 
 ## Research Context
 
-Accurate state estimation from heterogeneous, intermittently available sensors remains a fundamental challenge in mobile robotics and autonomous driving. This benchmark addresses the problem of **confidence-aware sensor fusion for 2D localization** — combining a coarse but always-available GNSS-like measurement with a higher-precision but variable-confidence camera-derived observation. While the robotics literature extensively covers Kalman filtering (EKF, UKF) and particle filtering (PF) individually (Thrun et al., *Probabilistic Robotics*, 2005), direct empirical comparisons under identical fused observation streams are less common, especially with explicit confidence-weighting at the measurement level. This project factors fusion out as a preprocessing layer, enabling a controlled three-way comparison of EKF, UKF, and PF on the same pre-fused sequence. The confidence-weighted fusion scheme relates to adaptive measurement-noise models studied in Bar-Shalom et al. (*Estimation with Applications*, 2001), but is here applied as a lightweight deterministic rule before estimator ingestion, simplifying the architecture while retaining the key benefit of down-weighting degraded visual estimates. By releasing a reproducible pipeline with synthetic and replay-based modes, this project provides a transparent baseline for further research into estimator selection, sensor degradation modelling, and multi-modal fusion under realistic dropout patterns.
+Accurate state estimation from heterogeneous, intermittently available sensors remains a fundamental challenge in mobile robotics and autonomous driving. This benchmark addresses the problem of **confidence-aware sensor fusion for 2D localization** — combining a coarse but always-available GNSS-like measurement with a higher-precision but variable-confidence camera-derived observation. While the robotics literature extensively covers Kalman filtering (EKF, UKF) and particle filtering (PF) individually (Thrun et al., *Probabilistic Robotics*, 2005), direct empirical comparisons under identical fused observation streams are less common, especially with explicit confidence-weighting at the measurement level. Prior work on loosely coupled GNSS–vision fusion (e.g., Weiss et al., 2011; Lynen et al., 2013) typically embeds fusion inside a single estimator; this project instead factors fusion out as a preprocessing layer, enabling a controlled three-way comparison of EKF, UKF, and PF on the same pre-fused sequence. The confidence-weighted fusion scheme relates to adaptive measurement-noise models studied in Bar-Shalom et al. (*Estimation with Applications*, 2001), but is here applied as a lightweight deterministic rule before estimator ingestion, simplifying the architecture while retaining the key benefit of down-weighting degraded visual estimates. By releasing a reproducible pipeline with synthetic and replay-based modes, this project provides a transparent baseline for further research into estimator selection, sensor degradation modelling, and multi-modal fusion under realistic dropout patterns.
 
 <details>
 <summary><strong>Project Overview (expanded)</strong></summary>
 
-This project implements a full localization benchmarking pipeline that ingests synchronized control signals and position observations, fuses camera and GNSS-like measurements into a single confidence-aware observation, and evaluates three classical estimators [EKF (Extended Kalman Filter), UKF (Unscented Kalman Filter), and PF (Particle Filter)] under the same frame sequence.
+This project implements a full localization benchmarking pipeline that ingests synchronized control signals and position observations, fuses camera and GNSS-like measurements into a single confidence-aware observation, and evaluates three classical estimators [EKF (Extended Kalman Filter), UKF (Unscented Kalman Filter), and PF (Particle Filter)] under exactly the same frame sequence.
 
 The emphasis is not only algorithm comparison, but reproducible engineering. The workflow includes dataset conversion utilities, deterministic command-line execution, consistent artifact generation, and report-ready outputs. That makes it suitable for method comparison, parameter tuning, and portfolio-style documentation of localization performance.
 
 In short, this module answers a concrete question with repeatable evidence: given the same controls and fused observations, which estimator provides the best trajectory accuracy for a specific scenario and configuration.
 
+</details>
 
-
-## The Project
+## This Project
 
 - Demonstrates confidence-aware sensor fusion in a compact and inspectable pipeline.
 - Compares three estimators under identical controls and measurements.
@@ -55,16 +55,38 @@ At each frame, the system:
 
 ```mermaid
 flowchart LR
-    A[Data Source\nSynthetic Adapter or Replay CSV] --> B[Measurements\nGNSS XY + Camera XY + Confidence]
+    A[Data Source\nSynthetic Adapter or Replay CSV] --> B[Position Measurements\nGNSS XY + Camera XY + Confidence]
+    A --> M[Motion Controls\nAcceleration + Yaw Rate]
     B --> C[Fusion Layer\nConfidence-weighted position fusion]
     C --> D1[EKF]
     C --> D2[UKF]
     C --> D3[PF]
+    M --> D1
+    M --> D2
+    M --> D3
     D1 --> E[Evaluator\nRMSE X Y POS]
     D2 --> E
     D3 --> E
     E --> F[Artifacts\nPNG plots + Markdown report]
 ```
+
+## Algorithms and Libraries
+
+### Algorithms
+
+- **Confidence-weighted position fusion:** combines GNSS-like and camera-derived XY observations while reducing the influence of low-confidence camera measurements.
+- **Extended Kalman Filter (EKF):** estimates the nonlinear vehicle state using local linearization.
+- **Unscented Kalman Filter (UKF):** propagates sigma points to estimate the nonlinear state without local linearization.
+- **Particle Filter (PF):** represents the state distribution with weighted particles and resampling.
+- **RGB-D visual odometry (optional conversion path):** ORB feature matching, RGB-D backprojection, PnP pose estimation, and trajectory accumulation produce camera-derived XY observations from a TUM sequence.
+- **Evaluation:** axis-wise and 2D position root-mean-square error (RMSE).
+
+### Python Libraries
+
+- **NumPy:** numerical arrays, sampling, and estimator calculations.
+- **Matplotlib:** benchmark and trajectory visualizations.
+- **OpenCV (`opencv-python`):** optional RGB-D visual-odometry conversion.
+- **Python standard library:** command-line parsing, paths, dataclasses, and report/file handling.
 
 ## Project Layout
 
@@ -217,7 +239,7 @@ Overlay outputs:
 
 ## Suggested Next Steps
 
-1. Integrate true GNSS/INS logs (for example, KITTI or Oxford RobotCar).
+1. Integrate true GNSS/INS logs (for example KITTI or Oxford RobotCar).
 2. Add VO outlier rejection and loop-closure constraints.
 3. Export innovation and covariance diagnostics for filter analysis.
 4. Add automated hyperparameter sweeps for PF and sensor-noise settings.
@@ -225,5 +247,4 @@ Overlay outputs:
 ## Related Documentation
 
 - Dataset shortlist and licensing notes: [DATASET_SOURCES.md](DATASET_SOURCES.md)
-
-</details>
+- Contribution guide (repository root): [HOWTOCONTRIBUTE.md](../../../HOWTOCONTRIBUTE.md)
