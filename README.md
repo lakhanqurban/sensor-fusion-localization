@@ -216,15 +216,15 @@ Useful options:
 
 ## 🖼️ Output Artifacts
 
-Benchmark outputs:
+### Benchmark comparison
 
-- output/sensor_fusion_localization_benchmark.png
-- output/sensor_fusion_localization_report.md (when --report is enabled)
+[<img src="output/sensor_fusion_localization_benchmark.png" alt="EKF, UKF, and particle-filter localization benchmark" width="720">](output/sensor_fusion_localization_benchmark.png)<br>
+[Open full-size benchmark plot](output/sensor_fusion_localization_benchmark.png) · [Open generated benchmark report](output/sensor_fusion_localization_report.md)
 
-Overlay outputs:
+### Ground truth, visual odometry, and fused trajectory
 
-- output/gt_vo_fused_overlay.png
-- output/gt_vo_fused_overlay_portfolio.png
+[<img src="output/gt_vo_fused_overlay_portfolio.png" alt="Ground-truth, visual-odometry, and fused localization trajectories" width="520">](output/gt_vo_fused_overlay_portfolio.png)<br>
+[Open portfolio overlay](output/gt_vo_fused_overlay_portfolio.png) · [Open detailed overlay](output/gt_vo_fused_overlay.png)
 
 ## 📐 Interpreting Metrics
 
